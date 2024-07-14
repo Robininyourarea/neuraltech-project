@@ -31,7 +31,8 @@ Welcome to the AI Model Web Application! This project provides a platform where 
 
 2. Set up the AI Server:
   ```bash
-  cd .\AI-server\ 
+  cd .\AI-server\
+  py -3.10 -m venv venv
   cd .\venv\
   cd .\Scripts\
   .\activate

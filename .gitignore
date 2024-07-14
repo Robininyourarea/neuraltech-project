@@ -1,0 +1,9 @@
+# Python virtual environment
+AI-server/py310_venv/
+
+# Node modules
+client/node_modules/
+web-server/node_modules/
+
+# Python cache files
+AI-server/__pycache__/

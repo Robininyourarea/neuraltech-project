@@ -11,6 +11,7 @@ Welcome to the AI Model Web Application! This project provides a platform where 
 ## Demo
 
 ![Demo Image](assets/scrn15.png)
+![Demo Image](assets/scrn16.png)
 
 ## Getting Started
 

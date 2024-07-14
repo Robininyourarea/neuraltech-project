@@ -1015,7 +1015,7 @@ model = torchvision.models.efficientnet_b0(weights = weights).to(device)
 
 
 
-onnx_path = "./model/cls/efficientnet_b0.onnx"
+onnx_path = "../model/test/efficientnet_b0.onnx"
 torch.onnx.export(model,
                  torch.randn(1, 3, 224, 224).to(device),
                  onnx_path,

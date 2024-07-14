@@ -7,3 +7,6 @@ web-server/node_modules/
 
 # Python cache files
 AI-server/__pycache__/
+
+# .env file
+web-server/.env

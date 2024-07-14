@@ -3,17 +3,22 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import axios from 'axios';
 import pg from "pg";
+import bcrypt from "bcrypt";
+import env from "dotenv";
 
 
 const app = express();
 const port = 5000;
+const saltRounds = 10;
+
+env.config();
 
 const db = new pg.Client({
-    user: "postgres",
-    host: "localhost",
-    database: "aiwebapp",
-    password: "mxnattha963",
-    port: 5432
+    user: process.env.PG_USER,
+    host: process.env.PG_HOST,
+    database: process.env.PG_DATABASE,
+    password: process.env.PG_PASSWORD,
+    port: process.env.PG_PORT
 });
 
 db.connect()
@@ -36,13 +41,20 @@ app.post("/login", async (req, res) => {
         const result = await db.query("SELECT * FROM users WHERE email = $1", [email])
         if (result.rows.length > 0) {
             const user = result.rows[0];
-            const storedPassword = user.password;
+            const storedHashedPassword = user.password;
 
-            if (password === storedPassword) {
-                res.json({ message: 'Login successful' });
-            } else {
-                res.json({ message: 'Incorrect password' });
-            }
+            //verifying the password
+            bcrypt.compare(password, storedHashedPassword, (err, result) => {
+                if (err) {
+                    console.log("Error comparing passwords:", err);
+                } else {
+                    if (result) {
+                        res.json({ message: 'Login successful' });
+                    } else {
+                        res.json({ message: 'Incorrect password' });
+                    }
+                }
+            })
         } else {
             res.json({ message: 'User not found' })
         }
@@ -63,19 +75,20 @@ app.post("/register", async (req, res) => {
         if (checkResult.rows.length > 0) {
             res.json({message: 'Email already exists. Try logging in.'});
         } else {
-            const result = await db.query(
-                "INSERT INTO users (email, password) VALUES ($1, $2)",
-                [regEmail, regPassword]
-            )
-            res.json({message: 'Your registration already successfully'});
+            bcrypt.hash(regPassword, saltRounds, async (err, hash) => {
+                if (err) {
+                    console.error("Error hashing password:", err);
+                } else {
+                    const result = await db.query("INSERT INTO users (email, password) VALUES ($1, $2)",
+                        [regEmail, hash]
+                    );
+                    res.json({message: 'Your registration already successfully'});
+                }
+            })
         }    
     } catch (err) {
         console.log(err);
     }
-    
-    
-    
-
     console.log(regEmail);
     console.log(regPassword);
 })
